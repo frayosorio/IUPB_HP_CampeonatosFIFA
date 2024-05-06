@@ -2,9 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { ReferenciasMaterialModule } from '../../../shared/modulos/referencias-material.module';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { ColumnMode, NgxDatatableModule, SelectionType } from '@swimlane/ngx-datatable';
 import { Seleccion } from '../../../core/entidades/Seleccion';
 import { SeleccionService } from '../servicios/seleccion.service';
+import { MatDialog } from '@angular/material/dialog';
+import { SeleccionEditarComponent } from '../seleccion-editar/seleccion-editar.component';
 
 @Component({
   selector: 'app-seleccion',
@@ -26,8 +28,12 @@ export class SeleccionComponent implements OnInit {
     { name: "Nombre", prop: "nombre" },
     { name: "Entidad", prop: "entidad" }
   ];
+  public modoColumna = ColumnMode;
+  public tipoSeleccion = SelectionType;
 
-  constructor(private seleccionServicio: SeleccionService) {
+  constructor(private seleccionServicio: SeleccionService,
+    public dialogServicio: MatDialog,
+  ) {
   }
 
   ngOnInit(): void {
@@ -51,7 +57,18 @@ export class SeleccionComponent implements OnInit {
 
   }
   agregar() {
-
+    const dialogRef = this.dialogServicio.open(SeleccionEditarComponent, {
+      width: '500px',
+      height: '300px',
+      data: {
+        encabezado: "Agregando una nueva Selección",
+        seleccion: {
+          id: 0,
+          nombre: "",
+          entidad: ""
+        },
+      }
+    });
   }
   modificar() {
 
