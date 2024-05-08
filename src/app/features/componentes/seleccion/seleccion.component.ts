@@ -69,6 +69,33 @@ export class SeleccionComponent implements OnInit {
         },
       }
     });
+
+    dialogRef.afterClosed().subscribe(
+      {
+        next: datos => {
+          if (datos) {
+            this.seleccionServicio.agregar(datos.seleccion).subscribe({
+              next: response => {
+                this.seleccionServicio.buscar(0, response.nombre).subscribe({
+                  next: response => {
+                    this.selecciones = response;
+                  },
+                  error: error => {
+                    window.alert(error);
+                  }
+                });
+              },
+              error: error => {
+                window.alert(error);
+              }
+            });
+          }
+        },
+        error: error => {
+          window.alert(error);
+        }
+      }
+    );
   }
   modificar() {
 
