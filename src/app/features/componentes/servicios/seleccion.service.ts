@@ -19,7 +19,7 @@ export class SeleccionService {
     return this.http.get<Seleccion[]>(`${this.url}listar`);
   }
 
-  public buscar(tipo:number, dato:string): Observable<Seleccion[]> {
+  public buscar(tipo: number, dato: string): Observable<Seleccion[]> {
     return this.http.get<Seleccion[]>(`${this.url}buscar/${tipo}/${dato}`);
   }
 
@@ -29,6 +29,10 @@ export class SeleccionService {
 
   public modificar(seleccion: Seleccion): Observable<Seleccion> {
     return this.http.put<Seleccion>(`${this.url}modificar`, seleccion);
+  }
+
+  public eliminar(id: number): Observable<boolean> {
+    return this.http.delete<boolean>(`${this.url}eliminar/${id}`);
   }
 
 }
