@@ -5,4 +5,5 @@ import { SeleccionComponent } from './features/componentes/seleccion/seleccion.c
 export const routes: Routes = [
     { path: "inicio", component: InicioComponent },
     { path: "selecciones", component: SeleccionComponent }
+    { path: "campeonatos", component:  }
 ];
