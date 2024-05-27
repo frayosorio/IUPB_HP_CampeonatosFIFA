@@ -1,17 +1,22 @@
 import { Component } from '@angular/core';
 import { ReferenciasMaterialModule } from '../../../shared/modulos/referencias-material.module';
 import { Campeonato } from '../../../core/entidades/Campeonato';
-import { ColumnMode, SelectionType } from '@swimlane/ngx-datatable';
+import { ColumnMode, NgxDatatableModule, SelectionType } from '@swimlane/ngx-datatable';
 import { CampeonatoService } from '../servicios/campeonato.service';
 import { MatDialog } from '@angular/material/dialog';
 import { CampeonatoEditarComponent } from '../campeonato-editar/campeonato-editar.component';
 import { DecidirComponent } from '../decidir/decidir.component';
+import { FormsModule } from '@angular/forms';
+import { Seleccion } from '../../../core/entidades/Seleccion';
+import { SeleccionService } from '../servicios/seleccion.service';
 
 @Component({
   selector: 'app-campeonato',
   standalone: true,
   imports: [
-    ReferenciasMaterialModule
+    ReferenciasMaterialModule,
+    NgxDatatableModule,
+    FormsModule
   ],
   templateUrl: './campeonato.component.html',
   styleUrl: './campeonato.component.css'
@@ -20,24 +25,28 @@ export class CampeonatoComponent {
 
   public textoBusqueda: string = "";
   public campeonatos: Campeonato[] = [];
+  public selecciones: Seleccion[] = [];
+
   public columnas = [
     { name: "Nombre", prop: "nombre" },
     { name: "País", prop: "seleccion.nombre" },
     { name: "Año", prop: "año" },
   ];
   public modoColumna = ColumnMode;
-  public tipoCampeonato = SelectionType;
+  public tipoSeleccion = SelectionType;
 
   public campeonatoEscogido: Campeonato | undefined;
   public indiceCampeonatoEscogido: number = -1;
 
   constructor(private campeonatoServicio: CampeonatoService,
+    private seleccionServicio: SeleccionService,
     public dialogServicio: MatDialog,
   ) {
   }
 
   ngOnInit(): void {
     this.listar();
+    this.listarSeleciones();
   }
 
   escoger(event: any) {
@@ -52,9 +61,23 @@ export class CampeonatoComponent {
       {
         next: response => {
           this.campeonatos = response;
+          this.campeonatos.map(item => { item.year = item.año; });
         },
         error: error => {
-          window.alert(error);
+          window.alert(error.message);
+        }
+      }
+    );
+  }
+
+  public listarSeleciones() {
+    this.seleccionServicio.listar().subscribe(
+      {
+        next: response => {
+          this.selecciones = response;
+        },
+        error: error => {
+          window.alert(error.message);
         }
       }
     );
@@ -70,7 +93,7 @@ export class CampeonatoComponent {
           this.campeonatos = response;
         },
         error: error => {
-          window.alert(error);
+          window.alert(error.message);
         }
       });
     }
@@ -87,8 +110,10 @@ export class CampeonatoComponent {
           seleccion: {
             id: 0, nombre: "", entidad: ""
           },
-          año: 0
+          idSeleccion: 0,
+          año: 0, year: 0
         },
+        selecciones: this.selecciones,
       },
       disableClose: true,
     });
@@ -103,18 +128,18 @@ export class CampeonatoComponent {
                   this.campeonatos = response;
                 },
                 error: error => {
-                  window.alert(error);
+                  window.alert(error.message);
                 }
               });
             },
             error: error => {
-              window.alert(error);
+              window.alert(error.message);
             }
           });
         }
       },
       error: error => {
-        window.alert(error);
+        window.alert(error.message);
       }
     }
     );
@@ -125,8 +150,9 @@ export class CampeonatoComponent {
         width: '500px',
         height: '300px',
         data: {
-          encabezado: `Editando el Campeonaton [${this.campeonatoEscogido.nombre}]`,
+          encabezado: `Editando el Campeonato [${this.campeonatoEscogido.nombre}]`,
           campeonato: this.campeonatoEscogido,
+          selecciones: this.selecciones,
         },
         disableClose: true,
       });

@@ -23,12 +23,14 @@ export class CampeonatoService {
     return this.http.get<Campeonato[]>(`${this.url}buscar/${tipo}/${dato}`);
   }
 
-  public agregar(Campeonato: Campeonato): Observable<Campeonato> {
-    return this.http.post<Campeonato>(`${this.url}agregar`, Campeonato);
+  public agregar(campeonato: Campeonato): Observable<Campeonato> {
+    campeonato.año = campeonato.year;
+    return this.http.post<Campeonato>(`${this.url}agregar`, campeonato);
   }
 
-  public modificar(Campeonato: Campeonato): Observable<Campeonato> {
-    return this.http.put<Campeonato>(`${this.url}modificar`, Campeonato);
+  public modificar(campeonato: Campeonato): Observable<Campeonato> {
+    campeonato.año = campeonato.year;
+    return this.http.put<Campeonato>(`${this.url}modificar`, campeonato);
   }
 
   public eliminar(id: number): Observable<boolean> {
