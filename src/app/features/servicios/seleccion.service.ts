@@ -1,16 +1,22 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Seleccion } from '../../core/entidades/Seleccion';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SeleccionService {
 
-  constructor(private http: HttpClient) { }
+  url: string;
 
-public listar():Observable<>
-{
+  constructor(private http: HttpClient) {
+    this.url = `${environment.urlBase}selecciones/`;
+  }
 
-}
+  public listar(): Observable<Seleccion[]> {
+    return this.http.get<Seleccion[]>(`${this.url}listar`);
+  }
 
 }
