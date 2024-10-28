@@ -1,0 +1,11 @@
+<div class="barraTituloCRUD">
+    Selecciones del Mundo
+</div>
+
+<div>
+    <mat-form-field appearance="fill">
+        <mat-label>Buscar</mat-label>
+        <input matInput [(ngModel)]="textoBusqueda">
+    </mat-form-field>
+    <button mat-stroked-button color="primary" (click)="buscar()">Buscar</button>
+</div>
