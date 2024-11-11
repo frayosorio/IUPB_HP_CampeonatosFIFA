@@ -1,0 +1,17 @@
+/* You can add global styles to this file, and also import other style files */
+@import '../node_modules/@swimlane/ngx-datatable/themes/material.css';
+@import '../node_modules/@swimlane/ngx-datatable/themes/dark.css';
+@import '../node_modules/@swimlane/ngx-datatable/themes/bootstrap.css';
+
+.barraTituloCRUD{
+    background: rgb(24, 2, 53);
+    color: #fff;
+    height: 75px;
+    text-align: center; /* Centrar horizontalmente */
+    display: flex; /* Utilizamos flexbox para centrar verticalmente */
+    justify-content: center; /* Centrar horizontalmente con flexbox */
+    align-items: center; /* Centrar verticalmente con flexbox */
+    width: 100%; /* Ancho completo */   
+}
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

@@ -1,0 +1,16 @@
+<div mat-dialog-content>
+    <h2>{{datos.encabezado}}</h2>
+    <mat-form-field appearance="fill">
+        <mat-label>Nombre de Selección o País</mat-label>
+        <input matInput [(ngModel)]="datos.seleccion.nombre">
+    </mat-form-field>
+    <br>
+    <mat-form-field appearance="fill">
+        <mat-label>Entidad rectora del fútbol</mat-label>
+        <input matInput [(ngModel)]="datos.seleccion.entidad">
+    </mat-form-field>
+</div>
+<div mat-dialog-actions>
+    <button mat-raised-button color="primary" [mat-dialog-close]="datos">Aceptar</button>
+    <button mat-stroked-button color="primary" (click)="cerrar()">Cancelar</button>
+</div>
