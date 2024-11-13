@@ -30,6 +30,8 @@ export class SeleccionComponent implements OnInit {
   public modoColumna = ColumnMode;
   public tipoSeleccion = SelectionType;
 
+  private seleccionEscogida: Seleccion | undefined;
+
   constructor(private seleccionServicio: SeleccionService,
     private dialogoServicio: MatDialog
   ) {
@@ -54,7 +56,9 @@ export class SeleccionComponent implements OnInit {
   }
 
   public escoger(event: any) {
-
+    if (event.type == "click") {
+      this.seleccionEscogida = event.row;
+    }
   }
 
   public listar() {
@@ -63,7 +67,7 @@ export class SeleccionComponent implements OnInit {
         this.selecciones = respuesta;
       },
       error: error => {
-        window.alert(error);
+        window.alert(error.message);
       }
     });
   }
@@ -71,8 +75,8 @@ export class SeleccionComponent implements OnInit {
   public agregar() {
     const dialogoEdicion = this.dialogoServicio.open(SeleccionEditarComponent,
       {
-        width:"500px",
-        height:"400px",
+        width: "500px",
+        height: "400px",
         data:
         {
           encabezado: "Agregando una nueva seleccion",
@@ -84,10 +88,52 @@ export class SeleccionComponent implements OnInit {
         }
       }
     );
+
+    dialogoEdicion.afterClosed().subscribe({
+      next: data => {
+        if (data) {
+          this.seleccionServicio.agregar(data.seleccion).subscribe(
+            {
+              next: respuesta => {
+                this.seleccionServicio.buscar(0, respuesta.nombre).subscribe({
+                  next: respuesta => {
+                    this.selecciones = respuesta;
+                  },
+                  error: error => {
+                    window.alert(error.message);
+                  }
+                });
+              },
+              error: error => {
+                window.alert(error.message);
+              }
+            }
+          );
+        }
+      },
+      error: error => {
+        window.alert(error.message);
+      }
+    });
   }
 
   public modificar() {
-
+    if (this.seleccionEscogida) {
+      const dialogoEdicion = this.dialogoServicio.open(SeleccionEditarComponent,
+        {
+          width: "500px",
+          height: "400px",
+          data:
+          {
+            encabezado: `Modificando la seleccion ${this.seleccionEscogida.nombre}`,
+            seleccion: this.seleccionEscogida
+          }
+        }
+      );
+    }
+    else{
+      window.alert("Debe escoger una selección");
+    }
   }
 
   public verificarEliminar() {
