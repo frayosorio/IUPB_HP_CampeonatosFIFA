@@ -6,6 +6,9 @@ import { Seleccion } from '../../../core/entidades/Seleccion';
 import { SeleccionService } from '../../servicios/seleccion.service';
 import { MatDialog } from '@angular/material/dialog';
 import { SeleccionEditarComponent } from '../seleccion-editar/seleccion-editar.component';
+import { DecidirComponent } from '../../../shared/componentes/decidir/decidir.component';
+
+const ANCHO_DIALOGO = "500px";
 
 @Component({
   selector: 'app-seleccion',
@@ -31,6 +34,7 @@ export class SeleccionComponent implements OnInit {
   public tipoSeleccion = SelectionType;
 
   private seleccionEscogida: Seleccion | undefined;
+  private indiceSeleccionEscogida: number = -1;
 
   constructor(private seleccionServicio: SeleccionService,
     private dialogoServicio: MatDialog
@@ -58,6 +62,7 @@ export class SeleccionComponent implements OnInit {
   public escoger(event: any) {
     if (event.type == "click") {
       this.seleccionEscogida = event.row;
+      this.indiceSeleccionEscogida = this.selecciones.findIndex(seleccion => seleccion == this.seleccionEscogida);
     }
   }
 
@@ -75,7 +80,7 @@ export class SeleccionComponent implements OnInit {
   public agregar() {
     const dialogoEdicion = this.dialogoServicio.open(SeleccionEditarComponent,
       {
-        width: "500px",
+        width: ANCHO_DIALOGO,
         height: "400px",
         data:
         {
@@ -121,23 +126,80 @@ export class SeleccionComponent implements OnInit {
     if (this.seleccionEscogida) {
       const dialogoEdicion = this.dialogoServicio.open(SeleccionEditarComponent,
         {
-          width: "500px",
+          width: ANCHO_DIALOGO,
           height: "400px",
           data:
           {
             encabezado: `Modificando la seleccion ${this.seleccionEscogida.nombre}`,
-            seleccion: this.seleccionEscogida
+            seleccion: JSON.parse(JSON.stringify(this.seleccionEscogida))
           }
         }
       );
+
+      dialogoEdicion.afterClosed().subscribe({
+        next: data => {
+          if (data) {
+            this.seleccionServicio.modificar(data.seleccion).subscribe({
+              next: respuesta => {
+                this.selecciones[this.indiceSeleccionEscogida] = respuesta;
+                this.selecciones = [...this.selecciones];
+              },
+              error: error => {
+                window.alert(error.message);
+              }
+            });
+          }
+        },
+        error: error => {
+          window.alert(error.message);
+        }
+      });
     }
-    else{
+    else {
       window.alert("Debe escoger una selección");
     }
   }
 
   public verificarEliminar() {
+    if (this.seleccionEscogida) {
+      const dialogoEdicion = this.dialogoServicio.open(DecidirComponent,
+        {
+          width: ANCHO_DIALOGO,
+          height: "200px",
+          data:
+          {
+            mensaje: `Está seguro de eliminar la selección ${this.seleccionEscogida.nombre}?`,
+            id: this.seleccionEscogida.id
+          }
+        }
+      );
 
+      dialogoEdicion.afterClosed().subscribe({
+        next: data => {
+          if (data) {
+            this.seleccionServicio.eliminar(data.id).subscribe({
+              next: respuesta => {
+                if (respuesta) {
+                  this.listar();
+                }
+                else{
+                  window.alert("No se pudo eliminar la selección");
+                }
+              },
+              error: error => {
+                window.alert(error.message);
+              }
+            });
+          }
+        },
+        error: error => {
+          window.alert(error.message);
+        }
+      });
+    }
+    else {
+      window.alert("Debe escoger una selección");
+    }
   }
 
 }

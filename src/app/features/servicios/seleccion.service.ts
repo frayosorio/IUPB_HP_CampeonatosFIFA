@@ -27,4 +27,11 @@ export class SeleccionService {
     return this.http.post<Seleccion>(`${this.url}agregar`, seleccion);
   }
 
+  public modificar(seleccion: Seleccion): Observable<Seleccion> {
+    return this.http.put<Seleccion>(`${this.url}modificar`, seleccion);
+  }
+
+  public eliminar(id:number): Observable<boolean> {
+    return this.http.delete<boolean>(`${this.url}eliminar/${id}`);
+  }
 }
